@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Add an employee to a project</title>
+     <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+     <h1 class="header">Add an employee to a project</h1>
+     <div class="form">
+          <form onsubmit="submitHandler(event)">
+               <div>
+                    <label for="Project">Project Name:</label>
+                    <select name="project" class="line" required>
+                         <% projects.forEach(project=>{ %>
+                              <option value="<%=project.project_name%>">
+                                   <%=project.project_name%>
+                              </option>
+                              <%}) %>
+                    </select>
+               </div>
+               <div>
+                    <label for="Employee">Employee Name :</label>
+                    <select name="emp" class="line" required>
+
+                    </select>
+               </div>
+               <div><button class="line" type="submit">Add</button></div>
+          </form>
+     </div>
+
+     <script src="/basic.js"></script>
+     <script src="/request.js"></script>
+     <script>
+          const selectEmp = document.querySelector("[name='emp']")
+          const projectN = document.querySelector("[name='project']")
+          const submitHandler = (event) => {
+               event.preventDefault()
+               console.log("Came here")
+               let projectName = projectN.value
+               let email = selectEmp.value
+               fetch("/alter/emp-project", {
+                    method: "POST",
+                    mode: "same-origin",
+                    headers: {
+                         'Content-type': "application/json"
+                    },
+                    body: JSON.stringify({ projectName, email })
+               })
+                    .then(res => promiseHandler(res, "There seems to be a problem please try again!"))
+                    .then(res => res.json())
+                    .then(res => {
+                         alert(res.msg)
+                         window.location.href = "/home"
+                    })
+                    .catch(err => {
+                         console.log(err)
+                    })
+          }
+
+          const addRecords = (data) => {
+               data.forEach(emp => {
+                    let option = document.createElement("option")
+                    let val = document.createAttribute("value")
+                    val.value = emp.email
+                    option.setAttributeNode(val)
+                    option.text = emp.person_name + " - " + emp.email
+                    selectEmp.add(option)
+               });
+          }
+
+          fetch("/validate/unemp", {
+               method: 'POST',
+               mode: "same-origin"
+          })
+               .then(res => promiseHandler(res, "There has been an error! Please try again!"))
+               .then(res => res.json())
+               .then(res => {
+                    addRecords(res.records)
+               })
+               .catch(err => {
+                    console.log(err)
+               })
+
+     </script>
+</body>
+
+</html>

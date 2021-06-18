@@ -1,0 +1,35 @@
+.header{
+     text-transform: capitalize;
+     text-align: center;
+}
+
+.form{
+     border: 1px solid black;
+     border-radius: 0.25em;
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     transform: translate(-50%,-50%);
+     padding: 2.5em;
+}
+
+input,select{
+     border: 0.1px solid black;
+     border-radius: 0.125em;
+}
+
+.line{
+     width: 100%;
+     margin-bottom: 15px;
+}
+
+.links{
+     text-align: center;
+}
+.links > * {
+     margin-top: 0.75em;
+}
+
+div{
+     margin-top: 5px;
+}

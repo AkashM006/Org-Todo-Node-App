@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Create a task</title>
+     <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+     <h1 class="header">assign a task</h1>
+     <div class="form">
+          <form onsubmit="submitHandler(event)">
+               <div>
+                    <label for="Task Objective">Task Objective :</label>
+                    <textarea name="objective" id="" cols="30" class="line" rows="5" required></textarea>
+               </div>
+               <div>
+                    <label for="End Date">End Date : </label>
+                    <input type="date" name="endDate" class="line" required>
+               </div>
+               <div>
+                    <label for="Assigned To">Assigned To : </label>
+                    <select name="assignedTo" class="line" required>
+                         <%if(role === "admin"){ %>
+                         <% projects.forEach(project => {%>
+                              <option value="<%=project.project_name%>"><%=project.project_name%></option>
+                         <%});%>
+                         <%}else{%>
+                              <% projects.forEach(project => {%>
+                              <option value="<%=project.email%>"><%=project.person_name%> - <%=project.email%></option>
+                              <%});%>
+                         <%}%>
+                    </select>
+               </div>
+               <div>
+                    <button type="submit" class="line">Assign</button>
+               </div>
+          </form>
+     </div>
+     <script src="/request.js"></script>
+     <script src="/basic.js"></script>
+     <script>
+          const taskObj = document.querySelector("[name='objective']")
+          taskObj.select()
+          const submitHandler = (event) => {
+               console.log("Here")
+               event.preventDefault()
+               let obj = taskObj.value
+               let endDate = document.querySelector("[name='endDate']").value
+               let assg = document.querySelector("[name='assignedTo']").value
+               fetch("/create/task",{
+                    method:"POST",
+                    mode:"same-origin",
+                    headers:{
+                         'Content-type':'application/json'
+                    },
+                    body:JSON.stringify({obj,endDate,assg})
+               })
+               .then(res => promiseHandler(res,"There has been an error please try again!"))
+               .then(res => res.json())
+               .then(res => {
+                    alert(res.msg)
+                    window.href.location = "/home"
+               })
+               .catch(err => {
+                    window.location.href = "/home"
+               })
+          }
+     </script>
+</body>
+</html>

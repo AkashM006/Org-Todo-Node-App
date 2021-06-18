@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Home</title>
+</head>
+
+<body>
+     <div class="header">
+          <h1 class="capit">
+               <%= user.name %>'s Dashboard:
+          </h1>
+          <hr>
+     </div>
+     <div>
+          <h3>Activities:</h3>
+          <%if(user.role==="admin" ){%>
+               <form action="/create/emp"><button>Create an employee</button></form>
+               <form action="/disp/emp"><button>Alter an employee details</button></form>
+               <br>
+               <form action="/create/project"><button>Create a Project</button></form>
+               <form action="/alter/emp-project"><button>Add employee to project</button></form>
+               <form action="/disp/project"><button>Drop a Project</button></form>
+               <br>
+               <%}%>
+                    <%if(user.role==="admin" || user.role==="leader" ){%>
+                         <form action="/create/task" method="GET"><button>Assign a task</button></form>
+                         <form action="/disp/task-given"><button>Tasks assigned by you</button></form>
+                         <%}%>
+                    <%if(user.role !== 'admin') {%>
+                         <form action="/disp/task-to-you"><button>Tasks assigned to you</button></form>
+                    <% }%>
+                         <br>
+                              <form action="/alter/profile" method="GET"><button>Edit profile</button></form>
+                              <form action="/logout" method="POST"><button>Log out</button></form>
+                              <hr>
+     </div>
+     <style>
+          body {
+               margin: 0 auto;
+               width: 90%;
+          }
+
+          .capit {
+               text-transform: capitalize;
+          }
+
+          form {
+               display: inline;
+          }
+
+          button {
+               margin-top: 5px;
+          }
+     </style>
+     <script>
+          // let user = '<%-JSON.stringify(user)%>';
+          // user = JSON.parse(user)
+          // console.log(user)
+     </script>
+</body>
+
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Update Your Profile</title>
+     <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+     <h1 class="header">Update Your Profile</h1>
+     <div class="form">
+          <form onsubmit="submitHandler(event)">
+               <div>
+                    <label for="Email">Your Email :</label>
+                    <input id="email" type="email" value="<%=user.email%>" class="line" name="Email"
+                         maxlength="30" required>
+               </div>
+               <div>
+                    <label for="Name">Your Name :</label>
+                    <input type="text" class="line" value="<%=user.name%>" name="Name" minlength="3" maxlength="20" required>
+               </div>
+               <div>
+                    <label for="Phone">Your Phone :</label>
+                    <input type="number" class="line" value="<%=user.phone%>" name="Phone" min="1000000000"
+                         max="9999999999" required>
+               </div>
+               <div>
+                    <label for="Role">Your Role :</label>
+                    <select name="Role" class="line" value="<%=user.role%>" disabled>
+                         <option value="employee">Employee</option>
+                         <option value="leader">Leader</option>
+                         <option value="newbie">NewBie</option>
+                    </select>
+               </div>
+               <div>
+                    <input type="radio" name="Con" value="1" onclick="setVis(event)"> Change Password
+                    <input type="radio" name="Con" value="0" onclick="setInvis(event)" checked>No
+                    <div class="passwd" style="opacity: 0.5;">
+                         <div>
+                              <label for="Old Password">Old Password</label>
+                              <input type="password" class="line" name="Password" minlength="8" maxlength="50" disabled>
+                         </div>
+                         <div>
+                              <label for="Old Password">New Password</label>
+                              <input type="password" class="line" name="NewPassword" minlength="8" maxlength="50" disabled>
+                         </div>
+                    </div>
+               </div>
+               <div>
+                    <button type="submit" class="line">Update</button>
+               </div>
+          </form>
+     </div>
+     <script src="/basic.js"></script>
+     <script src="/request.js"></script>
+     <script>
+          const us = '<%-JSON.stringify(user)%>'
+          const user = JSON.parse(us)
+          const passwd = document.querySelector(".passwd");
+          const passd = document.querySelector("[name='Password']")
+          const newPassd = document.querySelector("[name='NewPassword']")
+          const setVis = (event) => {
+               passwd.style.opacity = 1
+               passd.disabled = false
+               newPassd.disabled = false
+               newPassd.required = true
+               passd.required = true
+          }
+          const setInvis = (event) => {
+               passwd.style.opacity = 0.5
+               passd.disabled = true
+               newPassd.disable = true
+               passd.required = false
+               newPassd.required = false
+          }
+
+          const submitHandler = (event) => {
+               event.preventDefault()
+               let name = document.querySelector("[name='Name']").value
+               let email = document.querySelector("[name='Email']").value
+               let phone = document.querySelector("[name='Phone']").value
+               let passCon = document.querySelector("[name='Con']:checked").value
+               let password = passd.value?passd.value:''
+               let newPassword = newPassd.value?newPassd.value:''
+               getEmailCustom(email)
+               .then(res => {
+                    if((res.status === 403 && user.email === email) || (res.status === 200))
+                         return Promise.resolve(res)
+                    else
+                         return Promise.reject("This email id already exists!Please enter a unique email")
+               })
+               .then(res => {
+                    return getPhoneCustom(phone)
+               })
+               .then(res => {
+                    if((res.status === 403 && user.phone === phone) || (res.status === 200))
+                         return Promise.resolve(res)
+                    else
+                         return Promise.reject("This phone already exists! Please enter a unique phone number")
+               })
+               .then(res => fetch("/alter/profile",{
+                    method:"POST",
+                    mode:"same-origin",
+                    headers:{
+                         'Content-type' : "application/json"
+                    },
+                    body:JSON.stringify({name,email,phone,passCon,password,newPassword})
+               }))
+               .then(res => promiseHandler(res,"Bad credentials! Please try again!"))
+               .then(res => res.json())
+               .then(res => {
+                    alert(res.msg+"Please login again.")
+                    window.location.href = "/"
+               })
+               .catch(err => {
+                    alert(err)
+               })
+          }
+     </script>
+</body>
+</html>

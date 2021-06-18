@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Tasks assigned to you</title>
+     <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+     <h1 class="header">tasks assigned to you</h1>
+     <table>
+          <table>
+               <tr>
+                    <th>Assigned to</th>
+                    <th>Objective</th>
+                    <th>Deadline</th>
+                    <th>Status</th>
+                    <th>Finsihed</th>
+               </tr>
+                    <% tasks.forEach(element => {%>
+                         <tr>
+                         <td><%=element.person_name%> - <%=element.email%></td>
+                         <td><%=element.objective%></td>
+                         <td><input type="date" value="<%=element.end_date%>" disabled></td>
+                         <td><%=element.status? "Finished":"Not Finsihed" %></td>
+                         <td><form method="POST" action="/alter/fin/<%=element.task_id%>"><button>Set Finished</button></form></td>
+                    </tr>
+                    <%}); %>
+          </table>
+     </table>
+     <style>
+          .table{
+               width: 80%;
+               margin: 0 auto;
+          }
+          table{
+               border: 1px solid black;
+               font-family: arial, sans-serif;
+               border-collapse: collapse;
+               width: 100%;
+          }
+          th,td{
+               border: 1px solid #dddddd;
+               text-align: left;
+               padding: 8px;
+          }
+          td:hover{
+               cursor: pointer;
+          }
+          tr:nth-child(even) {
+              background-color: #dddddd;
+          }
+     </style>
+     <script>
+          const finished = (event) => {
+               console.log(event)
+          }
+     </script>
+</body>
+</html>

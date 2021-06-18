@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Tasks given by you</title>
+     <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+     <h1 class="header">tasks given by you</h1>
+     <table>
+          <tr>
+               <th>Assigned to</th>
+               <th>Objective</th>
+               <th>Deadline</th>
+               <th>Status</th>
+          </tr>
+               <% tasks.forEach(element => {%>
+                    <tr>
+                    <td><%=element.person_name%> - <%=element.email%></td>
+                    <td><%=element.objective%></td>
+                    <td><input type="date" value="<%=element.end_date%>" disabled></td>
+                    <td><%=element.status? "Finished":"Not Finsihed" %></td>
+               </tr>
+               <%}); %>
+     </table>
+
+     <style>
+          .table{
+               width: 80%;
+               margin: 0 auto;
+          }
+          table{
+               border: 1px solid black;
+               font-family: arial, sans-serif;
+               border-collapse: collapse;
+               width: 100%;
+          }
+          th,td{
+               border: 1px solid #dddddd;
+               text-align: left;
+               padding: 8px;
+          }
+          td:hover{
+               cursor: pointer;
+          }
+          tr:nth-child(even) {
+              background-color: #dddddd;
+          }
+     </style>
+</body>
+</html>

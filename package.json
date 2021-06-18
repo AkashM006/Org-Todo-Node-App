@@ -1,0 +1,19 @@
+{
+  "name": "dbms-app",
+  "version": "1.0.0",
+  "description": "This is a project for dbms. This is a CRM project implemented using SQL SERVER, NODE.JS.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Akash. M",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "client-sessions": "^0.8.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "firebase": "^8.6.1",
+    "mssql": "^7.0.0"
+  }
+}

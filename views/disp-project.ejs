@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Projects in our organization</title>
+     <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+     <h1 class="header">Projects in our organization</h1>
+     <hr>
+     <form action="/home" method="GET">
+          <button>Home</button>
+     </form>
+     <hr>
+     <div>
+          <p>Wait to fetch all the projects....</p>
+          <div class="table vis">
+               <table>
+                    <tr>
+                         <th>Name</th>
+                         <th>Leader</th>
+                         <th>View</th>
+                         <th>Drop</th>
+                    </tr>
+                    <tr class="data">
+                         <td>Alfreds Futterkiste</td>
+                         <td>Maria Anders</td>
+                         <td>Germany</td>
+                         <td>Germany</td>
+                    </tr>
+                    <tr class="data">
+                         <td>Centro comercial Moctezuma</td>
+                         <td>Francisco Chang</td>
+                         <td>Mexico</td>
+                         <td>Mexico</td>
+                    </tr>
+               </table>
+          </div>
+     </div>
+     <style>
+          .vis {
+               display: none;
+          }
+
+          .table {
+               width: 80%;
+               margin: 0 auto;
+          }
+
+          table {
+               border: 1px solid black;
+               font-family: arial, sans-serif;
+               border-collapse: collapse;
+               width: 100%;
+          }
+
+          th,
+          td {
+               border: 1px solid #dddddd;
+               text-align: left;
+               padding: 8px;
+          }
+
+          td:hover {
+               cursor: pointer;
+          }
+
+          tr:nth-child(even) {
+               background-color: #dddddd;
+          }
+     </style>
+     <script src="/basic.js"></script>
+     <script src="/request.js"></script>
+     <script>
+          const delRecord = (event, email) => {
+               event.preventDefault();
+               console.log(email)
+          }
+
+          const createElements = (data) => {
+               let trs = document.querySelectorAll(".data");
+               trs.forEach(tr => { tr.remove() })
+               let newRows = []
+               let table = document.querySelector("table");
+               data.forEach(record => {
+                    let row = table.insertRow(1)
+                    let cell1 = row.insertCell(0)
+                    let cell2 = row.insertCell(1)
+                    let cell3 = row.insertCell(2)
+                    let cell4 = row.insertCell(3)
+                    row.classList.add("data")
+                    cell1.innerHTML = record.project_name;
+                    cell2.innerHTML = record.person_name;
+                    cell3.innerHTML = `<form action='/disp/${record.project_name}/${record.person_name}' method='GET'><button>View</button></form>`
+                    cell4.innerHTML = `<form action='/delete/${record.project_name}' method='POST'><button>Drop</button></form>`
+               })
+          }
+
+          fetch("/disp/project", {
+               method: "POST",
+               mode: "same-origin",
+          })
+               .then(res => promiseHandler(res, "There has been an error please try again!"))
+               .then(res => res.json())
+               .then(res => {
+                    createElements(res.records)
+                    document.querySelector(".table").classList.remove("vis");
+                    document.querySelector("p").classList.add("vis");
+               })
+               .catch(err => {
+                    alert(err)
+               })
+     </script>
+</body>
+
+</html>

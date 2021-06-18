@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>New Employee</title>
+     <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+     <div class="form">
+          <h1>Get Started</h1>
+          <form onsubmit="submitHandler(event)">
+               <div>
+                    <label for="Email">Email :</label>
+                    <input id="email" class="line" type="email" name="Email" required>
+               </div>
+               <div>
+                    <label for="Name">Name :</label>
+                    <input class="line" name="Name" type="text" minlength="3" required>
+               </div>
+               <div>
+                    <label for="Phone">Phone :</label>
+                    <input type="number" class="line" name="Phone" min="1000000000"
+                         max="9999999999" required>
+               </div>
+               <div>
+                    <label for="Password">Password :</label>
+                    <input class="line" name="Password" type="password" minlength="8" required>
+               </div>
+               <div>
+                    <button class="line">Get Started</button>
+               </div>
+          </form>
+          <div class="links">
+               <div>
+                    <a href="/">Already have an account? Login here</a>
+               </div>
+               <div>
+                    <a href="/create-org">Create an Organization</a>
+               </div>
+          </div>
+     </div>
+     <script src="/basic.js"></script>
+     <script src="/request.js"></script>
+     <script>
+          const submitHandler = (event) =>{
+               event.preventDefault()
+               let Name = document.querySelector("[name='Name']").value
+               let Phone = document.querySelector("[name='Phone']").value
+               let Password = document.querySelector("[name='Password']").value
+               let Email = document.querySelector("[name='Email']").value
+               // action="/new-emp" method="POST"
+               fetch("/new-emp",{
+                    method:"POST",
+                    mode:"same-origin",
+                    headers:{
+                         'Content-type':"application/json"
+                    },
+                    body:JSON.stringify({Name,Phone,Password,Email})
+               })
+               .then(res => promiseHandler(res,"Please enter valid credentials!"))
+               .then(res => res.json())
+               .then(res => {
+                    console.log(res)
+                    alert(res.msg)
+                    window.location.href = "/home"
+               })
+               .catch(err => {
+                    alert(err)
+               })
+
+          }
+     </script>
+</body>
+</html>

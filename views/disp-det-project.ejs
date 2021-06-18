@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title><%=projectName%></title>
+     <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+     <div class="form">
+          <h1 class="header"><%=projectName%>'s details</h1>
+          <form action="/delete/<%=projectName%>" method="POST">
+               <div>
+                    <label for="Project name">Project Name:</label>
+                    <label class="line" for="Name"><%=projectName%></label>
+               </div>
+               <div>
+                    <label for="Leader Name">Leader Name:</label>
+                    <label class="line" for="Leader"><%=leaderName%></label>
+               </div>
+               <div>
+                    <label for="Employees">Employees in this project:</label>
+                    <label class="line" for="Count-Employee"><%=employees%></label>
+               </div>
+               <div>
+                    <label for="tasks">Tasks in this project:</label>
+                    <label class="line" for="Count-Task"><%=tasks%></label>
+               </div>
+               <button class="line" type="submit">Drop</button>
+          </form>
+     </div>
+     <style>
+          div{
+               margin-bottom: 5px;
+          }
+     </style>
+</body>
+</html>

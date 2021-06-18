@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Create your Organization</title>
+     <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+     <div class="form">
+          <h1>Create an Organization</h1>
+          <form onsubmit="validateSubmit(event)">
+               <div>
+                    <div>
+                         <label for="Email">Admin Email :</label>
+                         <input id="email" onfocusout="validateEmail()" type="email" class="line" name="Email"
+                              maxlength="30" required>
+                    </div>
+                    <div>
+                         <label for="Name">Admin Name :</label>
+                         <input type="text" class="line" name="Name" minlength="3" maxlength="20" required>
+                    </div>
+                    <div>
+                         <label for="Phone">Admin Phone :</label>
+                         <input type="number" onblur="validatePhone()" class="line" name="Phone" min="1000000000"
+                              max="9999999999" required>
+                    </div>
+
+                    <div>
+                         <label for="Password">Admin Password :</label>
+                         <input type="password" class="line" name="Password" minlength="8" maxlength="50" required>
+                    </div>
+                    <div>
+                         <label for="Organization Name">Organization Name :</label>
+                         <input type="text" class="line" name="orgName" onblur="validate()" minlength="5" maxlength="50"
+                              required>
+                    </div>
+                    <div>
+                         <label for="Organization Type">Organization Type :</label>
+                         <select class="line" name="type">
+                              <option value="personal">Personal</option>
+                              <option value="professional">Professional</option>
+                         </select>
+                    </div>
+                    <div><button class="line">Create your Organization</button></div>
+               </div>
+          </form>
+          <div class="links">
+               <div>
+                    <a href="/new-emp">New employee? Click here get you ready!</a>
+               </div>
+               <div>
+                    <a href="/">Already have an account? Login here</a>
+               </div>
+          </div>
+     </div>
+     <script src="/basic.js"></script>
+     <script src="/request.js"></script>
+     <script>
+          alert('Note: Only admin of the organization must fill these details...!If you are not leave immediately!')
+          let orgName = document.querySelector("[name='orgName']")
+          let em = document.querySelector("[name='Email']")
+          let ph = document.querySelector("[name='Phone']")
+          const getPhone = (Phone) => {
+               return (fetch("/validate/phone", {
+                    method: 'POST',
+                    mode: "same-origin",
+                    headers: {
+                         "Content-type": "application/json"
+                    },
+                    body: JSON.stringify({ Phone })
+               }))
+          }
+          const getEmail = (email) => {
+               return (fetch("/validate/email", {
+                    method: 'POST',
+                    mode: "same-origin",
+                    headers: {
+                         "Content-type": "application/json"
+                    },
+                    body: JSON.stringify({ email })
+               }))
+          }
+          const getOrg = (orgName) => {
+               return (fetch("/validate/orgName", {
+                    method: 'POST',
+                    mode: 'same-origin',
+                    headers: {
+                         'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({ orgName })
+               }))
+          }
+          const validate = (event) => {
+               getOrg(orgName.value)
+                    .then(res => res.json())
+                    .then(res => {
+                         // console.log(res)
+                         if (res.stat === 1) {
+                              alert(res.msg)
+                         }
+                    })
+                    .catch(err => {
+                         console.log(err)
+                    })
+          }
+
+          const validateEmail = () => {
+               let email = em.value
+               console.log(email)
+               if (email === "")
+                    return
+               else {
+                    console.log("Sending request")
+                    getEmail(email)
+                         .then(res => promiseHandler(res, "This email already exists. Please enter a unique email"))
+                         .then(res => res.json())
+                         .then(res => {
+                              console.log(res.msg)
+                         })
+                         .catch(err => {
+                              console.log(err)
+                              alert(err)
+                         })
+               }
+          }
+
+          const validatePhone = () => {
+               let phone = ph.value;
+               if (phone === "")
+                    return
+               else {
+                    getPhone(phone)
+                         .then(res => promiseHandler(res, "This phone already exists. Please enter a unique number"))
+                         .then(res => res.json())
+                         .then(res => {
+                              console.log(res.msg)
+                         })
+                         .catch(err => {
+                              alert(err)
+                              console.log(err)
+                         })
+               }
+          }
+
+          const validateSubmit = (event) => {
+               event.preventDefault()
+               getOrg(orgName.value)
+                    .then(res => promiseHandler(res, "This organization name already exists. Please enter a new name...."))
+                    .then(res => res.json())
+                    .then(res => {
+                         // console.log(res)
+                         if (res.stat === 1) {
+                              alert(res.msg)
+                         }
+                         else {
+                              getEmail(em.value)
+                                   .then(res => promiseHandler(res, "This email already exists. Please enter a unique email"))
+                                   .then(res => res.json())
+                                   .then(res => {
+                                        getPhone(ph.value)
+                                             .then(res => promiseHandler(res, "This phone already exists. Please enter a unique number"))
+                                             .then(res => res.json())
+                                             .then(res => {
+                                                  let Email = document.querySelector("[name='Email']").value;
+                                                  let Name = document.querySelector("[name='Name']").value;
+                                                  let Phone = document.querySelector("[name='Phone']").value;
+                                                  let Password = document.querySelector("[name='Password']").value;
+                                                  let orgName = document.querySelector("[name='orgName']").value;
+                                                  let type = document.querySelector("[name='type']").value;
+                                                  fetch("/create-org", {
+                                                       method: "POST",
+                                                       mode: "same-origin",
+                                                       headers: {
+                                                            'Content-type': 'application/json'
+                                                       },
+                                                       body: JSON.stringify({
+                                                            Email, Name, Phone, Password, orgName, type
+                                                       })
+                                                  })
+                                                       .then(resp => promiseHandler(resp, "Please check the credentials"))
+                                                       .then(resp => resp.json())
+                                                       .then(resp => {
+                                                            // if(res.stat === 0){
+                                                            // console.log("result after the creating the org :")
+                                                            console.log(res)
+                                                            alert("Organization successfully created!")
+                                                            window.location.href = "/home"
+                                                            // }
+                                                            // else
+                                                            //      console.log(res)
+                                                       })
+                                                       .catch(err => {
+                                                            alert(err)
+                                                            console.log(err)
+                                                       })
+                                             })
+                                             .catch(err => {
+                                                  console.log(err)
+                                                  alert(err)
+                                             })
+                                   })
+                                   .catch(err => {
+                                        console.log(err)
+                                        alert(err)
+                                   })
+                         }
+                    }).catch(err => {
+                         console.log(err)
+                         alert(err)
+                    })
+          }
+     </script>
+</body>
+
+</html>

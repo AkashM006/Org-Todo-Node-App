@@ -1,0 +1,23 @@
+routes:
+
+/valdation : 
+{
+	for doing all validations
+	/orgName: for checking unique organization name
+	/phone: for checking unique phone number
+	/email: for checking unique email
+}
+
+/ : for login
+
+/home : the dashboard
+
+/create-org : create an organization
+
+/logout : for logging out and delete the session
+
+/new-emp : login for new employees
+
+/task : create a new task
+
+/create-emp : create a new employee

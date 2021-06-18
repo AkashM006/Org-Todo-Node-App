@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Employee <%=prop%></title>
+     <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+     <h1 class="header">Employee <%= prop %>
+     </h1>
+     <hr>
+     <form action="/home" method="GET">
+          <button>Home</button>
+     </form>
+     <hr>
+     <% if(prop==="creation" ){ %>
+          <div class="form">
+               <form onsubmit="submitHandler(event)">
+                    <div>
+                         <label for="Email">Employee Email :</label>
+                         <input id="email" type="email" class="line" name="Email"
+                              maxlength="30" required>
+                    </div>
+                    <div>
+                         <label for="Name">Employee Name :</label>
+                         <input type="text" class="line" name="Name" minlength="3" maxlength="20" required>
+                    </div>
+                    <div>
+                         <label for="Phone">Employee Phone :</label>
+                         <input type="number" class="line" name="Phone" min="1000000000"
+                              max="9999999999" required>
+                    </div>
+                    <div>
+                         <button type="submit" class="line">Create</button>
+                    </div>
+               </form>
+          </div>
+          <% } %>
+          <% if(prop === 'alteration'){ %>
+               <div class="form">
+                    <form onsubmit="alterSubmitHandler(event)">
+                         <div>
+                              <label for="Email">Employee Email :</label>
+                              <input id="email" value="<%=emp.email%>" type="email" class="line" name="Email"
+                                   maxlength="30" disabled required>
+                         </div>
+                         <div>
+                              <label for="Name">Employee Name :</label>
+                              <input type="text" value="<%=emp.name%>" class="line" name="Name" minlength="3" maxlength="20" required>
+                         </div>
+                         <div>
+                              <label for="Phone">Employee Phone :</label>
+                              <input type="number"  class="line" name="Phone" min="1000000000"
+                                   max="9999999999" value="<%=emp.phone%>" required>
+                         </div>
+                         <div>
+                              <label for="Role">Employee Role :</label>
+                              <select name="Role" value="<%=emp.role%>" class="line">
+                                   <option value="employee">Employee</option>
+                                   <option value="leader">Leader</option>
+                                   <option value="newbie">NewBie</option>
+                              </select>
+                         </div>
+                         <div>
+                              <button type="submit" class="line">Alter</button>
+                              
+                         </div>
+                    </form>
+                    <% if(emp.role === 'employee'){ %>
+                         <button onclick="fireEmp(event)" class="line">Fire</button>
+                    <% }%>
+          <% } %>
+               <script src="/basic.js"></script>
+               <script src="/request.js"></script>
+               <script>
+                    const pro = '<%-JSON.stringify(prop)%>'
+                    const prop = String(pro)
+                    const emp = JSON.parse('<%-JSON.stringify(emp)%>') ?? null
+                    const em = document.getElementById("email");
+                    const ph = document.querySelector("[name='Phone']")
+                    const na = document.querySelector("[name='Name']")
+                    const ro = document.querySelector("[name='Role']")
+                    if(prop === '"alteration"'){
+                         alert("Note: You cannot change the Email of the employee")
+                         na.select()
+                    }
+                    const fireEmp = (event) => {               
+                         event.preventDefault()
+                         let email = emp.email
+                         fetch("/delete/emp/",{
+                              method:'POST',
+                              mode:"same-origin",
+                              headers:{
+                                   'Content-type':'application/json'
+                              },
+                              body:JSON.stringify({email})
+                         })
+                         .then(res => promiseHandler(res,"There has been an error please try again!!"))
+                         .then(res => res.json())
+                         .then(res => {
+                              alert(res)
+                              window.location.href="/home"
+                         })
+                         .catch(err => {
+                              alert(res)
+                         })
+                    }
+                    const validateEmail = () => {
+                         getEmailCustom(em.value)
+                              .then(res => promiseHandler(res, "This email id already exists please enter a unique email id!"))
+                              .then(res => res.json())
+                              .then(res => {
+                                   console.log("In create-emp.ejs :", res)
+                              })
+                              .catch(err => {
+                                   em.select()
+                                   alert(err)
+                              })
+                    }
+                    const validatePhone = () => {
+                         getPhoneCustom(ph.value)
+                              .then(res => promiseHandler(res, "This mobile number already exists please enter a unique number!"))
+                              .then(res => res.json())
+                              .then(res => {
+                                   console.log(res)
+                              })
+                              .catch(err => {
+                                   ph.select()
+                                   alert(err)
+                              })
+                    }
+
+                    const alterSubmitHandler = (event) => {
+                         event.preventDefault()
+                         let Email = em.value
+                         let Phone = ph.value
+                         let Name = na.value
+                         let Role = ro.value
+                         console.log(emp.phone)
+                         Phone = (Phone === emp.phone)?0:Phone
+                         console.log(Phone)
+                         getPhoneCustom(Phone)
+                         .then(res => promiseHandler(res,"This phone already exists. Please enter a unique number"))
+                         .then(res => res.json())
+                         .then(res => {
+                              let email = emp.email
+                              Phone = ph.value
+                              return (fetch("/alter/emp",{
+                                   method:"POST",
+                                   mode:"same-origin",
+                                   headers:{
+                                        'Content-type':'application/json'
+                                   },
+                                   body:JSON.stringify({email,Phone,Name,Role})
+                              }))
+                         })
+                         .then(res => promiseHandler(res,"There is an error please try again!"))
+                         .then(res=> res.json())
+                         .then(res => {
+                              console.log(res)
+                              alert(res.msg)
+                              window.location.href = "/home"
+                         })
+                         .catch(err => {
+                              alert(err)
+                         })
+                    }
+
+                    const submitHandler = (event) => {
+                         let Email = em.value
+                         let Phone = ph.value
+                         let Name = na.value
+                         event.preventDefault()
+                         getEmailCustom(Email)
+                              .then(res => promiseHandler(res, "This email already exists. Please enter a unique email id!"))
+                              .then(res => res.json())
+                              .then(res => {
+                                   return getPhoneCustom(Phone)
+                              })
+                              .then(res => promiseHandler(res, "This phone number already exists. Please enter a unique number!"))
+                              .then(res => res.json())
+                              .then(res => {
+                                   return fetch("/create/emp", {
+                                        method: "POST",
+                                        mode: "same-origin",
+                                        headers: {
+                                             'Content-type': "application/json"
+                                        },
+                                        body: JSON.stringify({ Email, Phone, Name, Role:'newbie' })
+                                   })
+                              })
+                              .then(res => promiseHandler(res, "There has been an error.Please try again!"))
+                              .then(res => res.json())
+                              .then(res => {
+                                   console.log(res.msg)
+                                   alert(res.msg)
+                                   window.location.href = "/create/emp"
+                              })
+                              .catch(err => {
+                                   em.select()
+                                 alert(err)
+                              })
+                    }
+               </script>
+</body>
+
+</html>
